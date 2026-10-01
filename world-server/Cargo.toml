@@ -1,0 +1,9 @@
+[package]
+name = "world-server"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+actix-web = "4.15.0"
+nalgebra = "0.35.0"
+prometheus-client = "0.25.1"
