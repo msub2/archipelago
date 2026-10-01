@@ -1,0 +1,55 @@
+services:
+  client:
+    build:
+      context: ./client
+    ports:
+      - "8080:8080"
+    environment:
+      NODE_ENV: production
+
+  database:
+    image: 'postgres:17'
+    restart: always
+    ports:
+      - 5432:5432
+    env_file: '.env'
+
+  metrics:
+    image: prom/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yaml'
+    ports:
+      - 9090:9090
+    restart: unless-stopped
+    volumes:
+      - ./observability/prometheus.yaml:/etc/prometheus/prometheus.yaml
+      - prom_data:/prometheus
+
+  observatory:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./observability/grafana.yaml:/etc/prometheus/prometheus.yaml
+    restart: unless-stopped
+
+  world-server:
+    image: rust:1.89
+    restart: unless-stopped
+    ports:
+      - 8081:8081
+    working_dir: /app
+    volumes:
+    - world-server_data:/app/target
+    - ./world-server:/app
+    command:
+    - cargo
+    - run
+
+volumes:
+  grafana_data:
+  prom_data:
+  pg_data:
+  world-server_data:

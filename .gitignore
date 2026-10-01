@@ -1,0 +1,7 @@
+.env
+
+# Client
+client/node_modules
+
+# World Server
+world-server/target
